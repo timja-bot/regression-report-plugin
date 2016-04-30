@@ -1,23 +1,6 @@
 package jp.skypencil.jenkins.regression;
 
 import static com.google.common.collect.Iterables.transform;
-import hudson.Extension;
-import hudson.Launcher;
-import hudson.Util;
-import hudson.console.AnnotatedLargeText;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.User;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Notifier;
-import hudson.tasks.Publisher;
-import hudson.tasks.Mailer;
-import hudson.tasks.junit.CaseResult;
-import hudson.tasks.test.AbstractTestResultAction;
-import hudson.tasks.test.TestResult;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,7 +12,6 @@ import java.util.StringTokenizer;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
@@ -44,15 +26,31 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
-import jenkins.model.Jenkins;
-import jenkins.model.JenkinsLocationConfiguration;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import hudson.Extension;
+import hudson.Launcher;
+import hudson.Util;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.model.User;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Mailer;
+import hudson.tasks.Notifier;
+import hudson.tasks.Publisher;
+import hudson.tasks.junit.CaseResult;
+import hudson.tasks.test.AbstractTestResultAction;
+import hudson.tasks.test.TestResult;
+import jenkins.model.Jenkins;
+import jenkins.model.JenkinsLocationConfiguration;
 
 /**
  * @version 1.0
@@ -177,11 +175,12 @@ public final class RegressionReportNotifier extends Notifier {
         String rootUrl = "";
         Session session = null;
         InternetAddress adminAddress = null;
-        if (Jenkins.getInstance() != null) {
-            rootUrl = Jenkins.getInstance().getRootUrl();
+        Jenkins jenkins = Jenkins.getInstance();
+        JenkinsLocationConfiguration configuration = JenkinsLocationConfiguration.get();
+        if (jenkins != null && configuration != null) {
+            rootUrl = jenkins.getRootUrl();
             session = Mailer.descriptor().createSession();
-            adminAddress = new InternetAddress(
-                    JenkinsLocationConfiguration.get().getAdminAddress());
+            adminAddress = new InternetAddress(configuration.getAdminAddress());
         }
         builder.append(Util.encode(rootUrl));
         builder.append(Util.encode(build.getUrl()));

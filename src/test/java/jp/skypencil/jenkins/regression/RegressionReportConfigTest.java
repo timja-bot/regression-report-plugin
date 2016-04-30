@@ -46,14 +46,15 @@ public class RegressionReportConfigTest {
             IOException, SAXException {
         FreeStyleProject project = jenkins.createFreeStyleProject(JOB_NAME);
 
+        final WebClient client = new WebClient();
         try {
-            HtmlPage configPage = new WebClient().getPage("job/" + JOB_NAME
+            HtmlPage configPage = client.getPage("job/" + JOB_NAME
                     + "/configure");
             HtmlForm form = configPage.getFormByName("config");
             form.getInputByName(NAME_CHECKBOX).setChecked(isEnabled);
-            form.submit(last(form.getHtmlElementsByTagName("button")));
+            last(form.getHtmlElementsByTagName("button")).click();
 
-            configPage = new WebClient().getPage("job/" + JOB_NAME + "/configure");
+            configPage = client.getPage("job/" + JOB_NAME + "/configure");
             form = configPage.getFormByName("config");
             HtmlInput checkbox = form.getInputByName(NAME_CHECKBOX);
             assertThat(checkbox.isChecked(), is(isEnabled));
@@ -63,6 +64,7 @@ public class RegressionReportConfigTest {
             } catch (InterruptedException ignore) {
                 ignore.printStackTrace();
             }
+            client.close();
         }
     }
 

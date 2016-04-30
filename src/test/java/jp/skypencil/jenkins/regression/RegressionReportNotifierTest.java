@@ -1,21 +1,14 @@
 package jp.skypencil.jenkins.regression;
 
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import hudson.Launcher;
-import hudson.console.AnnotatedLargeText;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.AbstractBuild;
-import hudson.model.User;
-import hudson.tasks.junit.CaseResult;
-import hudson.tasks.junit.CaseResult.Status;
-import hudson.tasks.test.AbstractTestResultAction;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,19 +25,31 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import com.google.common.collect.Lists;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CaseResult.class)
+import hudson.Launcher;
+import hudson.console.AnnotatedLargeText;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.model.User;
+import hudson.tasks.Mailer;
+import hudson.tasks.junit.CaseResult;
+import hudson.tasks.junit.CaseResult.Status;
+import hudson.tasks.test.AbstractTestResultAction;
+import jenkins.model.JenkinsLocationConfiguration;
+
 public class RegressionReportNotifierTest {
     private BuildListener listener;
     private Launcher launcher;
     private AbstractBuild<?, ?> build;
+
+    @Rule
+    public JenkinsRule rule = new JenkinsRule();
 
     @Before
     public void setUp() throws Exception {
@@ -54,6 +59,10 @@ public class RegressionReportNotifierTest {
         PrintStream logger = mock(PrintStream.class);
         doReturn("").when(build).getUrl();
         doReturn(logger).when(listener).getLogger();
+
+        // set administrator's address to avoid NPE
+        JenkinsLocationConfiguration configuration = JenkinsLocationConfiguration.get();
+        configuration.setAdminAddress("admin@address.com");
     }
 
     @Test
@@ -108,6 +117,8 @@ public class RegressionReportNotifierTest {
         doReturn(Result.FAILURE).when(build).getResult();
         User culprit = mock(User.class);
         doReturn("culprit").when(culprit).getId();
+        doReturn(new Mailer.UserProperty("culprit@mail.com")).when(culprit)
+                .getProperty(eq(Mailer.UserProperty.class));
         doReturn(new ChangeLogSetMock(build).withChangeBy(culprit)).when(build)
                 .getChangeSet();
 
@@ -122,7 +133,7 @@ public class RegressionReportNotifierTest {
         makeRegression();
 
         File f = new File(getClass().getResource("/log").getPath());
-        AnnotatedLargeText text = new AnnotatedLargeText(f, Charset.defaultCharset(), false, build);
+        AnnotatedLargeText<?> text = new AnnotatedLargeText<>(f, Charset.defaultCharset(), false, build);
         doReturn(text).when(build).getLogText();
         doReturn(f.getAbsoluteFile().getParentFile()).when(build).getRootDir();
 

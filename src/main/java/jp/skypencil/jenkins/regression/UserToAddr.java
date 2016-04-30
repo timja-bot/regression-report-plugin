@@ -2,6 +2,7 @@ package jp.skypencil.jenkins.regression;
 
 import java.io.PrintStream;
 
+import javax.annotation.Nonnull;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -25,7 +26,7 @@ final class UserToAddr implements Function<User, Address> {
     }
 
     @Override
-    public Address apply(User user) {
+    public Address apply(@Nonnull User user) {
         Mailer.UserProperty mailProperty = user.getProperty(Mailer.UserProperty.class);
         if (mailProperty == null) {
             return idToAddr.apply(user.getId());
