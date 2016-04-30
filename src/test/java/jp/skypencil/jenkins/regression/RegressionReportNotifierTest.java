@@ -122,7 +122,7 @@ public class RegressionReportNotifierTest {
         makeRegression();
 
         File f = new File(getClass().getResource("/log").getPath());
-        AnnotatedLargeText text = new AnnotatedLargeText(f, Charset.defaultCharset(), false, build);
+        AnnotatedLargeText<?> text = new AnnotatedLargeText<>(f, Charset.defaultCharset(), false, build);
         doReturn(text).when(build).getLogText();
         doReturn(f.getAbsoluteFile().getParentFile()).when(build).getRootDir();
 
