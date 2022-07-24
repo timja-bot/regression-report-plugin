@@ -20,7 +20,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <powermock.version>1.5</powermock.version>
-    <jenkins.version>1.651.1</jenkins.version>
   </properties>
   <scm>
     <connection>scm:git:git://github.com:jenkinsci/regression-report-plugin.git</connection>
