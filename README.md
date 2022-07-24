@@ -2,7 +2,7 @@ Jenkins regression report plugin
 ================================
 This plugin sends a mail if your test cases find regressions.
 
-![built and tested on DEV@cloud](http://static-www.cloudbees.com/images/badges/BuiltOnDEV.png)
+[![.github/workflows/build.yml](https://github.com/jenkinsci/regression-report-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/jenkinsci/regression-report-plugin/actions/workflows/build.yml)
 
 A Jenkins plugin which solves one common problem to introduce CI to legacy project: a lot of failed tests hide regression (new failed bug).
 
