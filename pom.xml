@@ -74,7 +74,13 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>junit</artifactId>
-      <version>1.3</version>
+      <version>1.29</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci</groupId>
+          <artifactId>symbol-annotation</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -103,6 +109,10 @@
       <artifactId>powermock-api-mockito</artifactId>
       <version>${powermock.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness</artifactId>
     </dependency>
   </dependencies>
   <repositories>

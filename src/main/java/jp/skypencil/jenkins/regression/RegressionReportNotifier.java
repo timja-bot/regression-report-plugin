@@ -258,7 +258,8 @@ public final class RegressionReportNotifier extends Notifier {
         multipart.addBodyPart(bodyText);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        build.getLogText().writeLogTo(0, out);
+        long written = build.getLogText().writeLogTo(0, out);
+        assert written >= 0;
 
         BodyPart emailAttachment = new MimeBodyPart();
         DataSource source = new ByteArrayDataSource(out.toByteArray(), "text/plain");

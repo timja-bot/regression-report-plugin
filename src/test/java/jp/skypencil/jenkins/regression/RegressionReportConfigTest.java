@@ -52,7 +52,7 @@ public class RegressionReportConfigTest {
                     + "/configure");
             HtmlForm form = configPage.getFormByName("config");
             form.getInputByName(NAME_CHECKBOX).setChecked(isEnabled);
-            last(form.getHtmlElementsByTagName("button")).click();
+            last(form.getElementsByTagName("button")).click();
 
             configPage = client.getPage("job/" + JOB_NAME + "/configure");
             form = configPage.getFormByName("config");
